@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import type { CSSProperties } from "react";
 import type { CompanyBranding } from "@/content/journey";
@@ -13,13 +12,12 @@ import { CompanyLogo } from "./CompanyLogo";
  * the Journey header (full-width strip on mobile, vertical rail on sm+).
  * Entirely data-driven off `company`; nothing here is per-entry logic.
  *
- * Hover is scoped to the panel itself (Framer Motion `whileHover`), not the
- * whole card — entering it scales the logo and nudges the watermark. Color
- * escalation (glow/border/industry text) is plain CSS via
- * `.company-panel:hover`, using the same
- * `color-mix(in oklab, var(--accent) ...)` pattern as the rest of the card.
- * `whileTap`/`:active` mirror the same "hover" state for touch, since mobile
- * has no real hover to trigger any of this from.
+ * One single trigger for every reveal here (logo color, watermark shift,
+ * logo scale, industry text color, panel glow/border) — hovering or
+ * touch-pressing anywhere on the parent `.company-card`, not just this
+ * panel. All of it is plain CSS keyed off `.company-card:hover`/`:active`
+ * (see globals.css), so there's no JS gesture-tracking to keep in sync
+ * across this component and its parent.
  */
 export function CompanyPanel({
   company,
@@ -35,11 +33,7 @@ export function CompanyPanel({
   const industry = language === "id" && company.industryId ? company.industryId : company.industry;
 
   return (
-    <motion.div
-      initial="rest"
-      whileHover="hover"
-      whileTap="hover"
-      animate="rest"
+    <div
       style={accentStyle}
       className={cn(
         "company-panel flex flex-row items-center gap-4 rounded-b-2xl border-t border-white/10 px-6 py-5",
@@ -47,23 +41,17 @@ export function CompanyPanel({
         className,
       )}
     >
-      <motion.span
+      <span
         aria-hidden
-        variants={{ rest: { x: 0, y: 0 }, hover: { x: -6, y: -4 } }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="pointer-events-none absolute inset-0 flex select-none items-center justify-center overflow-hidden font-heading font-bold leading-none"
+        className="company-panel-watermark pointer-events-none absolute inset-0 flex select-none items-center justify-center overflow-hidden font-heading font-bold leading-none"
         style={{ color: company.accent, opacity: 0.05, fontSize: "clamp(3.25rem, 11vw, 6.5rem)" }}
       >
         {company.initials}
-      </motion.span>
+      </span>
 
-      <motion.div
-        variants={{ rest: { scale: 1 }, hover: { scale: 1.08 } }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="shrink-0"
-      >
+      <div className="company-logo-wrap shrink-0">
         <CompanyLogo company={company} size={48} />
-      </motion.div>
+      </div>
 
       <div className="flex min-w-0 flex-col sm:items-center">
         <p className="truncate font-heading text-sm font-semibold text-foreground sm:text-base">
@@ -93,6 +81,6 @@ export function CompanyPanel({
           </span>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
