@@ -18,6 +18,8 @@ import { CompanyLogo } from "./CompanyLogo";
  * escalation (glow/border/industry text) is plain CSS via
  * `.company-panel:hover`, using the same
  * `color-mix(in oklab, var(--accent) ...)` pattern as the rest of the card.
+ * `whileTap`/`:active` mirror the same "hover" state for touch, since mobile
+ * has no real hover to trigger any of this from.
  */
 export function CompanyPanel({
   company,
@@ -36,6 +38,7 @@ export function CompanyPanel({
     <motion.div
       initial="rest"
       whileHover="hover"
+      whileTap="hover"
       animate="rest"
       style={accentStyle}
       className={cn(

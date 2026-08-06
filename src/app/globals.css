@@ -225,6 +225,9 @@
 .company-card {
   position: relative;
   transition: border-color 0.4s ease;
+  /* Suppress the default tap-flash so the deliberate :active accent reveal
+     below reads cleanly on touch instead of getting muddied by it. */
+  -webkit-tap-highlight-color: transparent;
 }
 .company-card::before {
   content: "";
@@ -241,10 +244,15 @@
   opacity: 0.35;
   transition: opacity 0.45s ease;
 }
-.company-card:hover::before {
+/* :active alongside :hover so the same reveal shows up on touch (tap-and-hold)
+   too — mobile has no real hover state, and this is the closest touch
+   equivalent without needing a JS-driven "tapped" toggle. */
+.company-card:hover::before,
+.company-card:active::before {
   opacity: 0.9;
 }
-.company-card:hover {
+.company-card:hover,
+.company-card:active {
   border-color: color-mix(in oklab, var(--accent, var(--primary)) 50%, transparent);
 }
 /* :not(.absolute) so a deliberately-absolute child (the corner logo) keeps
@@ -257,7 +265,8 @@
 .company-chip {
   transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
 }
-.company-card:hover .company-chip {
+.company-card:hover .company-chip,
+.company-card:active .company-chip {
   border-color: color-mix(in oklab, var(--accent, var(--primary)) 55%, transparent);
   background-color: color-mix(in oklab, var(--accent, var(--primary)) 16%, transparent);
   color: color-mix(in oklab, var(--accent, var(--primary)) 88%, white);
@@ -266,7 +275,8 @@
 .company-button {
   transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
 }
-.company-card:hover .company-button {
+.company-card:hover .company-button,
+.company-card:active .company-button {
   border-color: color-mix(in oklab, var(--accent, var(--primary)) 55%, transparent);
   background-color: color-mix(in oklab, var(--accent, var(--primary)) 14%, transparent);
   color: var(--foreground);
@@ -283,7 +293,8 @@
   filter: grayscale(1) brightness(0.85);
   transition: filter 0.35s ease;
 }
-.company-panel:hover .company-logo img {
+.company-panel:hover .company-logo img,
+.company-panel:active .company-logo img {
   filter: grayscale(0) brightness(1.05);
 }
 
@@ -297,7 +308,8 @@
     border-color 0.35s ease,
     background-color 0.35s ease;
 }
-.company-panel:hover .company-logo-initials {
+.company-panel:hover .company-logo-initials,
+.company-panel:active .company-logo-initials {
   color: var(--accent, var(--primary));
   border-color: color-mix(in oklab, var(--accent, var(--primary)) 55%, transparent);
   background-color: color-mix(in oklab, var(--accent, var(--primary)) 16%, transparent);
@@ -311,6 +323,7 @@
   position: relative;
   overflow: hidden;
   transition: border-color 0.4s ease, background-color 0.4s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 .company-panel::before {
   content: "";
@@ -326,10 +339,12 @@
   opacity: 0.4;
   transition: opacity 0.45s ease;
 }
-.company-panel:hover::before {
+.company-panel:hover::before,
+.company-panel:active::before {
   opacity: 1;
 }
-.company-panel:hover {
+.company-panel:hover,
+.company-panel:active {
   border-color: color-mix(in oklab, var(--accent, var(--primary)) 45%, transparent);
   background-color: color-mix(in oklab, var(--accent, var(--primary)) 6%, transparent);
 }
@@ -344,7 +359,8 @@
   color: var(--muted-foreground);
   transition: color 0.35s ease;
 }
-.company-panel:hover .company-panel-industry {
+.company-panel:hover .company-panel-industry,
+.company-panel:active .company-panel-industry {
   color: color-mix(in oklab, var(--accent, var(--primary)) 70%, var(--muted-foreground));
 }
 
