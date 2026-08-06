@@ -34,6 +34,10 @@ export function ConnectionNodes({ className }: { className?: string }) {
     let nodes: Node[] = [];
     let animationFrame = 0;
     let isRunning = true;
+    let isPageVisible = true;
+    let isOnScreen = true;
+    let isScrolling = false;
+    let scrollEndTimer = 0;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     function resize() {
@@ -105,26 +109,59 @@ export function ConnectionNodes({ className }: { className?: string }) {
       cancelAnimationFrame(animationFrame);
     }
 
+    // The per-frame distance check between every node pair is real work —
+    // fine at rest, but it competes with the main thread for the exact
+    // frames a slow, deliberate scroll gesture needs, which is what makes
+    // that kind of scroll feel like it stutters/catches. A fast flick is
+    // handled by the OS's own momentum scrolling and never touches this, so
+    // it stays smooth either way. Pausing the redraw for the scroll's
+    // duration (and just after) removes the contention only when it'd
+    // otherwise be visible — the idle animation itself is unchanged.
+    function syncRunState() {
+      if (isPageVisible && isOnScreen && !isScrolling) start();
+      else stop();
+    }
+
+    function onScroll() {
+      isScrolling = true;
+      stop();
+      window.clearTimeout(scrollEndTimer);
+      scrollEndTimer = window.setTimeout(() => {
+        isScrolling = false;
+        syncRunState();
+      }, 150);
+    }
+
     resize();
     animationFrame = requestAnimationFrame(draw);
 
     const resizeObserver = new ResizeObserver(resize);
     if (canvas.parentElement) resizeObserver.observe(canvas.parentElement);
 
-    const onVisibilityChange = () => (document.hidden ? stop() : start());
+    const onVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+      syncRunState();
+    };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     const intersectionObserver = new IntersectionObserver(
-      ([entry]) => (entry.isIntersecting ? start() : stop()),
+      ([entry]) => {
+        isOnScreen = entry.isIntersecting;
+        syncRunState();
+      },
       { threshold: 0 },
     );
     intersectionObserver.observe(canvas);
 
+    window.addEventListener("scroll", onScroll, { passive: true });
+
     return () => {
       stop();
+      window.clearTimeout(scrollEndTimer);
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("scroll", onScroll);
     };
   }, [prefersReducedMotion]);
 
