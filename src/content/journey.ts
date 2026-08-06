@@ -271,7 +271,7 @@ export const journeyEntries: JourneyEntry[] = [
     category: "career",
     year: "2025",
     period: "March 2025 — January 2026",
-    role: "Staff Toko",
+    role: "Costumer Relation",
     organization: "PT Alfaria Trijaya",
     company: {
       name: "Alfamart",
