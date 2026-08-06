@@ -1,0 +1,412 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-plex-mono);
+  --font-heading: var(--font-space-grotesk);
+  --color-glow-primary: var(--glow-primary);
+  --color-glow-secondary: var(--glow-secondary);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+  Ven Jean portfolio is a single, permanently-dark, premium theme by design
+  (see DESIGN DIRECTION in the brief) — there is no light-mode toggle, so the
+  brand palette lives directly in :root rather than behind a .dark class.
+*/
+:root {
+  --background: #08111f;
+  --foreground: #f8fafc;
+  --card: #111827;
+  --card-foreground: #f8fafc;
+  --popover: #111827;
+  --popover-foreground: #f8fafc;
+  --primary: #3b82f6;
+  --primary-foreground: #f8fafc;
+  --secondary: #22d3ee;
+  --secondary-foreground: #08111f;
+  --muted: #111827;
+  --muted-foreground: #94a3b8;
+  --accent: #22d3ee;
+  --accent-foreground: #08111f;
+  --destructive: #ef4444;
+  --border: rgba(248, 250, 252, 0.1);
+  --input: rgba(248, 250, 252, 0.12);
+  --ring: #3b82f6;
+  --glow-primary: #3b82f6;
+  --glow-secondary: #22d3ee;
+  --chart-1: #3b82f6;
+  --chart-2: #22d3ee;
+  --chart-3: #94a3b8;
+  --chart-4: #60a5fa;
+  --chart-5: #67e8f9;
+  --radius: 0.75rem;
+  --sidebar: #111827;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #3b82f6;
+  --sidebar-primary-foreground: #f8fafc;
+  --sidebar-accent: #22d3ee;
+  --sidebar-accent-foreground: #08111f;
+  --sidebar-border: rgba(248, 250, 252, 0.1);
+  --sidebar-ring: #3b82f6;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans scroll-smooth;
+  }
+  ::selection {
+    background-color: color-mix(in oklab, var(--primary) 40%, transparent);
+    color: var(--foreground);
+  }
+}
+
+@layer utilities {
+  /* Reusable glassmorphism surface used across cards, nav, and modals. */
+  .glass-card {
+    @apply relative rounded-2xl border border-white/10 bg-card/60 backdrop-blur-xl;
+    box-shadow: 0 1px 0 0 rgba(248, 250, 252, 0.05) inset,
+      0 20px 60px -20px rgba(8, 17, 31, 0.8);
+  }
+
+  /* Soft radial glow mesh — the one shared background treatment every
+     section pulls from instead of re-implementing its own gradient. */
+  .gradient-mesh-bg {
+    background-image: radial-gradient(
+        ellipse 80% 50% at 20% 0%,
+        color-mix(in oklab, var(--glow-primary) 22%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 60% 50% at 100% 30%,
+        color-mix(in oklab, var(--glow-secondary) 16%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 60% 40% at 0% 100%,
+        color-mix(in oklab, var(--glow-primary) 12%, transparent),
+        transparent 60%
+      );
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      100deg,
+      var(--primary),
+      var(--secondary)
+    );
+  }
+
+  /* Hero's 2-column text/portrait split. Named grid areas (not just
+     column order) so the portrait can sit AFTER the description but
+     BEFORE the CTA on mobile, while sitting beside the whole text block
+     on sm+ — a reorder that plain flex `order-*` can't express once the
+     button needs to stay visually grouped with the text on desktop. */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "eyebrow"
+      "title"
+      "subtitle"
+      "description"
+      "portrait"
+      "cta";
+    column-gap: 3rem;
+  }
+  @media (min-width: 640px) {
+    .hero-grid {
+      /* ~65/35 — text stays the dominant column, portrait supports it. */
+      grid-template-columns: 13fr 7fr;
+      grid-template-areas:
+        "eyebrow portrait"
+        "title portrait"
+        "subtitle portrait"
+        "description portrait"
+        "cta portrait";
+      align-items: center;
+      column-gap: 4rem;
+    }
+  }
+
+  /* Soft radial glow seated behind the portrait — deliberately translucent
+     so the ConnectionNodes particles keep drifting through it. */
+  .portrait-glow {
+    background: radial-gradient(circle, #28b5ff 0%, #1da1f2 45%, transparent 72%);
+  }
+
+  /* Fades the portrait's own flat background out at the edges (its source
+     photo has a solid backdrop, not real alpha transparency) so it blends
+     into the hero instead of sitting on top of it as a hard-edged rectangle. */
+  .portrait-vignette {
+    mask-image: radial-gradient(ellipse 68% 78% at 50% 38%, black 55%, transparent 92%);
+    -webkit-mask-image: radial-gradient(ellipse 68% 78% at 50% 38%, black 55%, transparent 92%);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes flow-pulse {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* Animated "circuit trace" connector used by the AI workflow pipeline. */
+.pipeline-track {
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    var(--primary),
+    var(--secondary),
+    transparent
+  );
+  background-size: 200% 100%;
+}
+
+/*
+  Per-company branding on Journey cards. `--accent` is set inline per card
+  (see CompanyLogo/JourneyCard) so this one block drives every company —
+  never a hardcoded color, and never a full card-background recolor.
+*/
+.company-card {
+  position: relative;
+  transition: border-color 0.4s ease;
+}
+.company-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 70% 55% at 15% 0%,
+    color-mix(in oklab, var(--accent, var(--primary)) 16%, transparent),
+    transparent 65%
+  );
+  opacity: 0.35;
+  transition: opacity 0.45s ease;
+}
+.company-card:hover::before {
+  opacity: 0.9;
+}
+.company-card:hover {
+  border-color: color-mix(in oklab, var(--accent, var(--primary)) 50%, transparent);
+}
+/* :not(.absolute) so a deliberately-absolute child (the corner logo) keeps
+   its own positioning instead of being forced back into flow here. */
+.company-card > *:not(.absolute) {
+  position: relative;
+  z-index: 1;
+}
+
+.company-chip {
+  transition: border-color 0.3s ease, color 0.3s ease, background-color 0.3s ease;
+}
+.company-card:hover .company-chip {
+  border-color: color-mix(in oklab, var(--accent, var(--primary)) 55%, transparent);
+  background-color: color-mix(in oklab, var(--accent, var(--primary)) 16%, transparent);
+  color: color-mix(in oklab, var(--accent, var(--primary)) 88%, white);
+}
+
+.company-button {
+  transition: border-color 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+.company-card:hover .company-button {
+  border-color: color-mix(in oklab, var(--accent, var(--primary)) 55%, transparent);
+  background-color: color-mix(in oklab, var(--accent, var(--primary)) 14%, transparent);
+  color: var(--foreground);
+}
+
+.company-icon {
+  color: var(--accent, var(--secondary));
+}
+
+/* Logo: real favicon image, monochrome by default, full color when its
+   Company Identity Panel is hovered (see .company-panel below — Framer
+   Motion owns the scale, this owns the color). */
+.company-logo img {
+  filter: grayscale(1) brightness(0.85);
+  transition: filter 0.35s ease;
+}
+.company-panel:hover .company-logo img {
+  filter: grayscale(0) brightness(1.05);
+}
+
+/* Logo fallback: colored initials badge when no domain/favicon exists. */
+.company-logo-initials {
+  color: var(--muted-foreground);
+  border-color: rgba(248, 250, 252, 0.15);
+  background-color: rgba(248, 250, 252, 0.05);
+  transition:
+    color 0.35s ease,
+    border-color 0.35s ease,
+    background-color 0.35s ease;
+}
+.company-panel:hover .company-logo-initials {
+  color: var(--accent, var(--primary));
+  border-color: color-mix(in oklab, var(--accent, var(--primary)) 55%, transparent);
+  background-color: color-mix(in oklab, var(--accent, var(--primary)) 16%, transparent);
+}
+
+/* ================= Company Identity Panel =================
+   The dedicated ~20-25%-width brand zone beside the Journey header row.
+   Hover is scoped to the panel itself, not the whole card — entering it
+   is what reveals the description/CTA and intensifies the glow. */
+.company-panel {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.4s ease, background-color 0.4s ease;
+}
+.company-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 90% 60% at 50% 0%,
+    color-mix(in oklab, var(--accent, var(--primary)) 22%, transparent),
+    transparent 70%
+  );
+  opacity: 0.4;
+  transition: opacity 0.45s ease;
+}
+.company-panel:hover::before {
+  opacity: 1;
+}
+.company-panel:hover {
+  border-color: color-mix(in oklab, var(--accent, var(--primary)) 45%, transparent);
+  background-color: color-mix(in oklab, var(--accent, var(--primary)) 6%, transparent);
+}
+/* :not(.absolute) — same reason as .company-card above: the watermark is
+   deliberately absolute and must keep that positioning. */
+.company-panel > *:not(.absolute) {
+  position: relative;
+  z-index: 1;
+}
+
+.company-panel-industry {
+  color: var(--muted-foreground);
+  transition: color 0.35s ease;
+}
+.company-panel:hover .company-panel-industry {
+  color: color-mix(in oklab, var(--accent, var(--primary)) 70%, var(--muted-foreground));
+}
+
+/* View Website CTA — filled accent pill with a hover glow, so it reads as a
+   real call-to-action rather than an outlined tag like the industry chips. */
+.company-website-button {
+  color: color-mix(in oklab, var(--accent, var(--primary)) 92%, white);
+  border-color: color-mix(in oklab, var(--accent, var(--primary)) 55%, transparent);
+  background-color: color-mix(in oklab, var(--accent, var(--primary)) 16%, transparent);
+  box-shadow: 0 0 0 0 transparent;
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    color 0.3s ease,
+    transform 0.2s ease;
+}
+.company-website-button:hover {
+  border-color: color-mix(in oklab, var(--accent, var(--primary)) 85%, transparent);
+  background-color: color-mix(in oklab, var(--accent, var(--primary)) 28%, transparent);
+  box-shadow: 0 6px 24px -6px color-mix(in oklab, var(--accent, var(--primary)) 60%, transparent);
+}
+.company-website-button:active {
+  transform: scale(0.96);
+}
+.company-website-button svg {
+  transition: transform 0.3s ease;
+}
+.company-website-button:hover svg {
+  transform: translate(2px, -2px);
+}
+
+.company-website-button--disabled {
+  color: var(--muted-foreground);
+  border-color: rgba(248, 250, 252, 0.12);
+  background-color: transparent;
+}
+
+/* Resources section — external link row(s) below the Media Gallery. */
+.journey-resource {
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.2s ease;
+}
+.journey-resource:hover {
+  border-color: color-mix(in oklab, var(--accent, var(--primary)) 45%, transparent);
+  background-color: color-mix(in oklab, var(--accent, var(--primary)) 10%, transparent);
+  box-shadow: 0 8px 24px -8px color-mix(in oklab, var(--accent, var(--primary)) 35%, transparent);
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
