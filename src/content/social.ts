@@ -4,6 +4,11 @@ export type SocialLink = {
   isPlaceholder: boolean;
 };
 
+export type ResumeOption = {
+  label: string;
+  href: string;
+};
+
 // WhatsApp and Email are the only channels here with an official way to
 // pre-fill a message via URL — LinkedIn/Instagram/Telegram have no equivalent
 // for a personal profile, so they stay as plain profile links.
@@ -24,5 +29,11 @@ export const socialLinks: SocialLink[] = [
   { label: "Instagram", href: "https://www.instagram.com/jean.fundedpartner/", isPlaceholder: false },
   { label: "Telegram", href: "https://t.me/luo_zhuo", isPlaceholder: false },
   { label: "WhatsApp", href: `https://wa.me/62895344643800?text=${encodedMessage}`, isPlaceholder: false },
-  { label: "Resume", href: "/resume.pdf", isPlaceholder: true },
+];
+
+// Two resume variants, picked by the visitor from a single "Resume" button —
+// drop the actual PDFs into `public/` at these exact paths.
+export const resumeOptions: ResumeOption[] = [
+  { label: "CS & Moderator", href: "/resume-cs-moderator.pdf" },
+  { label: "Developer", href: "/resume-developer.pdf" },
 ];

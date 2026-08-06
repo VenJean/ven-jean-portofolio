@@ -1,9 +1,10 @@
 "use client";
 
-import { Briefcase, Camera, FileText, Mail, MessageCircle, Send, type LucideIcon } from "lucide-react";
+import { Menu } from "@base-ui/react/menu";
+import { Briefcase, Camera, ChevronDown, FileText, Mail, MessageCircle, Send, type LucideIcon } from "lucide-react";
 import { RevealOnScroll } from "@/components/shared/RevealOnScroll";
 import { WordRevealText } from "@/components/shared/WordRevealText";
-import { socialLinks } from "@/content/social";
+import { resumeOptions, socialLinks } from "@/content/social";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 // lucide-react doesn't ship brand/logo icons — these are the closest
@@ -15,8 +16,41 @@ const SOCIAL_ICONS: Record<string, LucideIcon> = {
   Instagram: Camera,
   Telegram: Send,
   WhatsApp: MessageCircle,
-  Resume: FileText,
 };
+
+/** One "Resume" pill that opens a small menu of role-specific variants,
+ * instead of a single generic file — picks up new/removed entries from
+ * `resumeOptions` automatically. */
+function ResumeMenu() {
+  return (
+    <Menu.Root>
+      <Menu.Trigger className="group inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-5 py-2.5 font-mono text-xs uppercase tracking-wider text-foreground/80 backdrop-blur-xl transition-colors hover:border-primary/50 hover:bg-primary/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 data-[popup-open]:border-primary/50 data-[popup-open]:bg-primary/10 data-[popup-open]:text-foreground">
+        <FileText size={14} className="text-secondary transition-transform group-hover:scale-110" />
+        Resume
+        <ChevronDown size={12} className="transition-transform data-[popup-open]:rotate-180" />
+      </Menu.Trigger>
+      <Menu.Portal>
+        <Menu.Positioner sideOffset={8}>
+          <Menu.Popup className="min-w-[200px] rounded-xl border border-white/10 bg-popover p-1.5 text-popover-foreground shadow-lg ring-1 ring-foreground/10 backdrop-blur-xl data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
+            {resumeOptions.map((option) => (
+              <Menu.LinkItem
+                key={option.label}
+                href={option.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                closeOnClick
+                className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 font-mono text-xs uppercase tracking-wider text-foreground/80 outline-none transition-colors data-[highlighted]:bg-primary/10 data-[highlighted]:text-foreground"
+              >
+                <FileText size={13} className="shrink-0 text-secondary" />
+                {option.label}
+              </Menu.LinkItem>
+            ))}
+          </Menu.Popup>
+        </Menu.Positioner>
+      </Menu.Portal>
+    </Menu.Root>
+  );
+}
 
 export function Contact() {
   const { t } = useLanguage();
@@ -84,6 +118,7 @@ export function Contact() {
                 </a>
               );
             })}
+            <ResumeMenu />
           </div>
         </RevealOnScroll>
       </div>
