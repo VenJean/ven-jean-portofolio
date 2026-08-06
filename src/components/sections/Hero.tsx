@@ -24,7 +24,7 @@ export function Hero() {
     <section
       id="hero"
       ref={sectionRef}
-      className="gradient-mesh-bg relative flex min-h-screen items-center overflow-hidden bg-background"
+      className="gradient-mesh-bg relative flex min-h-screen items-start overflow-hidden bg-background pt-28 sm:items-center sm:pt-0"
     >
       <motion.div style={{ y: bgY }} className="absolute inset-0">
         <ConnectionNodes className="absolute inset-0 h-full w-full" />
